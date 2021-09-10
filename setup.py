@@ -27,7 +27,7 @@ setup(
     packages=['h5EvalData'],
     url='https://github.com/somnathjana/h5EvalData',  # Optional
     install_requires=['numpy', 'matplotlib', 'scipy', 'h5py'],  # Optional
-    license='',
+    license='MIT',
     author='Somnath Jana',
     author_email='sj.phys@gmail.com',
     description='Evaluation of the data saved as .h5 file at HHG-Lab, MaxBornInstitute-Berlin',  # Required

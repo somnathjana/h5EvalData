@@ -18,6 +18,9 @@ def create_bins(bins):
     bins_new = bins_pad[:-1] + np.diff(bins_pad)/2
     return bins_new
 
+def testPrint():
+    return "Hello"
+
 #--------------------------------------------------------------------------
 class h5Evaluation:
     '''
