@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import binned_statistic as bs
 import h5py
 
-#--------------------------------------------------------------------------
+#---------Helper functions-----------------------------------------------------
 def create_bins(bins):
     bins_diff = np.diff(bins)
     leftpad = np.array([bins[0]-bins_diff[0]])
@@ -18,10 +18,18 @@ def create_bins(bins):
     bins_new = bins_pad[:-1] + np.diff(bins_pad)/2
     return bins_new
 
-def testPrint():
-    return "Hello"
-
-#--------------------------------------------------------------------------
+def bin_data(x, y, bins=None):
+    x_mean = bs(x, x, statistic='mean', bins=bins)[0]
+    y_mean = bs(x, y, statistic='mean', bins=bins)[0]
+    
+    return x_mean, y_mean
+    
+def fig_kwargs(kwargs):
+    figsize = kwargs.get('figsize', plt.rcParams['figure.figsize'])
+    title = kwargs.get('title', '')
+    ls = kwargs.get('ls', '')
+    return figsize, title, ls
+#------------------------------------------------------------------------------
 class h5Evaluation:
     '''
     '''
@@ -132,9 +140,7 @@ class h5Evaluation:
         #self.mean(sl) # works when all scans are of same length
         self.data_stat(sl)
         #colors = rcParams["axes.prop_cycle"]()
-        figsize = kwargs.get('figsize', plt.rcParams['figure.figsize'])
-        title = kwargs.get('title', '')
-        ls = kwargs.get('ls', '')
+        figsize, title, ls = fig_kwargs(kwargs)
         plt.figure(figsize=figsize)
         lineObjects = plt.plot(self.xmean, self.ymean.T, 'o', ls=ls)
         #lineObjects = plt.plot(self.x, self.y_mean.T, 'o', ls='--') # works when all scans are of same length
@@ -147,9 +153,7 @@ class h5Evaluation:
         plt.show()
     
     def plot_seq(self, seq, kwargs):
-        figsize = kwargs.get('figsize', plt.rcParams['figure.figsize'])
-        title = kwargs.get('title', '')
-        ls = kwargs.get('ls', '')
+        figsize, title, ls = fig_kwargs(kwargs)
         fig, ax = plt.subplots(figsize=figsize)
         ax.set_title(title)
         legends = []
@@ -164,10 +168,12 @@ class h5Evaluation:
         ax.set_ylabel('measurement')
         plt.show()
 
-    def plot_asym_nor():
+    def plot_seq_norm(self, seq, kwargs):
+        figsize, title, ls = fig_kwargs(kwargs)
         pass
         
-        
+    def close(self):
+        self.h5.close()
         
         
         
