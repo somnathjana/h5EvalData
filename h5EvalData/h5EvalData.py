@@ -85,6 +85,8 @@ class h5Evaluation:
             data_conc = np.array([])
             for j, sn in enumerate(self.sl):
                 data_sn = self.h5['entry%d'%sn]['measurement'][key][()]
+                if data_sn.ndim==0:
+                    data_sn = data_sn.reshape((1,))
                 data_conc = np.concatenate((data_conc, data_sn))
             data_dic[key] = data_conc
         x = np.array([])
