@@ -123,6 +123,9 @@ class h5Evaluation:
         nth = bin_param.get('nth', 1)
         if bins is None:
             bins = create_bins(self.data_dic['x'], nth=nth)
+        else:
+            bins = create_bins(bins, nth=nth)
+            
         x = self.data_dic[self.motor]
         y = np.zeros((len(self.chnl), len(x)))
         for i, c in enumerate(self.chnl):
