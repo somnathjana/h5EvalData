@@ -10,7 +10,8 @@ from scipy.stats import binned_statistic as bs
 import h5py
 
 #---------Helper functions-----------------------------------------------------
-def create_bins(bins):
+def create_bins(bins, nth=1):
+    bins = bins[::nth]
     bins_diff = np.diff(bins)
     leftpad = np.array([bins[0]-bins_diff[0]])
     rightpad = np.array([bins[-1]+bins_diff[-1]])
@@ -97,7 +98,7 @@ class h5Evaluation:
         data_dic['x'] = x
         self.data_dic = data_dic
     
-    def data_stat(self, sl, bins=None):
+    def data_stat(self, sl, bin_param={}):
         '''
         Calculates mean, std, sum (more can be implemented) for each desired channels
         for a scan list (sl) after binning to bins. When bins is None, it takes the 
@@ -118,8 +119,10 @@ class h5Evaluation:
 
         '''
         self.data_dict(sl)
+        bins = bin_param.get('bins', None)
+        nth = bin_param.get('nth', 1)
         if bins is None:
-            bins = create_bins(self.data_dic['x'])
+            bins = create_bins(self.data_dic['x'], nth=nth)
         x = self.data_dic[self.motor]
         y = np.zeros((len(self.chnl), len(x)))
         for i, c in enumerate(self.chnl):
@@ -138,9 +141,9 @@ class h5Evaluation:
         self.xsum = x_sum
         self.ysum = y_sum
         
-    def plot_mean(self, sl, kwargs):
+    def plot_mean(self, sl, bin_param={}, kwargs={}):
         #self.mean(sl) # works when all scans are of same length
-        self.data_stat(sl)
+        self.data_stat(sl, bin_param)
         #colors = rcParams["axes.prop_cycle"]()
         figsize, title, ls = fig_kwargs(kwargs)
         plt.figure(figsize=figsize)
@@ -154,14 +157,14 @@ class h5Evaluation:
         plt.title(title)
         plt.show()
     
-    def plot_seq(self, seq, kwargs):
+    def plot_seq(self, seq, bin_param={}, kwargs={}):
         figsize, title, ls = fig_kwargs(kwargs)
         fig, ax = plt.subplots(figsize=figsize)
         ax.set_title(title)
         legends = []
         for i in range(len(seq)):
             sl = seq[i][0]
-            self.data_stat(sl)
+            self.data_stat(sl, bin_param)
             ax.plot(self.xmean, self.ymean.T, 'o', ls=ls)
             for j in range(len(self.chnl)):
                 legends.append(self.chnl[j] + '_' + str(seq[i][1]))
