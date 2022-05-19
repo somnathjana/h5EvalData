@@ -30,6 +30,9 @@ def fig_kwargs(kwargs):
     title = kwargs.get('title', '')
     ls = kwargs.get('ls', '')
     return figsize, title, ls
+
+def test():
+    return
 #------------------------------------------------------------------------------
 class h5Evaluation:
     '''
@@ -77,6 +80,9 @@ class h5Evaluation:
         self.sl = sl
         sn0 = self.sl[0]
         key_list = list(self.h5['entry%d'%sn0]['measurement'].keys())
+        for sn in self.sl:
+            keys_sn = list(self.h5['entry%d'%sn]['measurement'].keys())
+            key_list = list(set(key_list).intersection(set(keys_sn)))
         keysToRemove = ['pre_scan_snapshot', 'ref', 'refM', 'rel', 'relM', 
                         'spec', 'specM']
         key_list = [keys for keys in key_list if keys not in keysToRemove]
@@ -154,7 +160,24 @@ class h5Evaluation:
         #lineObjects = plt.plot(self.x, self.y_mean.T, 'o', ls='--') # works when all scans are of same length
         plt.legend(lineObjects, self.chnl, frameon=False)
         plt.xlabel(self.motor)
-        plt.ylabel('measurement')
+        plt.ylabel('Asymmetry')
+        # plt.axhline(color='k', ls='--', lw=1.0)
+        # plt.axvline(color='k', ls='--', lw=1.0)
+        plt.title(title)
+        plt.show()
+    
+    def plot_AsymVsEn(self, sl, bin_param={}, kwargs={}):
+        self.data_stat(sl, bin_param)
+        #colors = rcParams["axes.prop_cycle"]()
+        figsize, title, ls = fig_kwargs(kwargs)
+        plt.figure(figsize=figsize)
+        x = self.xmean
+        y = self.ymean.T
+        lineObjects = plt.plot(x, y, 'o', ls=ls)
+        #lineObjects = plt.plot(self.x, self.y_mean.T, 'o', ls='--') # works when all scans are of same length
+        plt.legend(lineObjects, self.chnl, frameon=False)
+        plt.xlabel('Energy')
+        plt.ylabel('Asymmetry')
         # plt.axhline(color='k', ls='--', lw=1.0)
         # plt.axvline(color='k', ls='--', lw=1.0)
         plt.title(title)
